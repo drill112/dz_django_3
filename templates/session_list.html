@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}Все сеансы{% endblock %}
+
+{% block content %}
+<style>
+    h1 {
+        color: #1f2a44;
+        margin-bottom: 25px;
+    }
+
+    .session-card {
+        background: white;
+        border-radius: 18px;
+        padding: 20px;
+        margin-bottom: 18px;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+    }
+
+    .session-card h2 {
+        margin-top: 0;
+        color: #2c3e50;
+    }
+
+    .session-card p {
+        font-size: 17px;
+        margin: 8px 0;
+    }
+
+    .session-card a {
+        display: inline-block;
+        margin-top: 10px;
+        text-decoration: none;
+        background: #6c63ff;
+        color: white;
+        padding: 10px 16px;
+        border-radius: 10px;
+    }
+</style>
+
+<h1>Все сеансы</h1>
+
+{% for session in sessions %}
+    <div class="session-card">
+        <h2>{{ session.movie.title }}</h2>
+        <p><b>Дата и время:</b> {{ session.date_time|date:"d.m.Y H:i" }}</p>
+        <p><b>Номер зала:</b> {{ session.hall_number }}</p>
+        <a href="{% url 'movie_detail' session.movie.id %}">Открыть фильм</a>
+    </div>
+{% empty %}
+    <div class="session-card">
+        <p>Пока сеансов нет.</p>
+    </div>
+{% endfor %}
+{% endblock %}

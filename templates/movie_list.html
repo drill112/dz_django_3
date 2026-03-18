@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Все фильмы{% endblock %}
+
+{% block content %}
+<style>
+    .top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    h1 {
+        margin: 0;
+        color: #1f2a44;
+    }
+
+    .add-btn {
+        display: inline-block;
+        text-decoration: none;
+        background: #27ae60;
+        color: white;
+        padding: 12px 18px;
+        border-radius: 10px;
+        font-weight: bold;
+    }
+
+    .movies {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 25px;
+    }
+
+    .movie-card {
+        background: white;
+        border-radius: 18px;
+        padding: 20px;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+        text-align: center;
+    }
+
+    .movie-card img {
+        width: 100%;
+        height: 320px;
+        object-fit: cover;
+        border-radius: 12px;
+        margin-bottom: 15px;
+    }
+
+    .movie-card h2 {
+        font-size: 22px;
+        margin-bottom: 10px;
+        color: #2c3e50;
+    }
+
+    .movie-card p {
+        color: #666;
+        margin-bottom: 15px;
+    }
+
+    .buttons {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        display: inline-block;
+        text-decoration: none;
+        color: white;
+        padding: 10px 16px;
+        border-radius: 10px;
+        font-size: 14px;
+    }
+
+    .btn-detail {
+        background: #6c63ff;
+    }
+
+    .btn-edit {
+        background: #3498db;
+    }
+
+    .btn-delete {
+        background: #e74c3c;
+    }
+</style>
+
+<div class="top-bar">
+    <h1>Все фильмы</h1>
+    <a href="{% url 'movie_create' %}" class="add-btn">Добавить фильм</a>
+</div>
+
+<div class="movies">
+    {% for movie in movies %}
+        <div class="movie-card">
+            <img src="{% static movie.poster %}" alt="{{ movie.title }}">
+            <h2>{{ movie.title }}</h2>
+            <p>{{ movie.genre }} | {{ movie.release_year }}</p>
+
+            <div class="buttons">
+                <a href="{% url 'movie_detail' movie.id %}" class="btn btn-detail">Подробнее</a>
+                <a href="{% url 'movie_update' movie.id %}" class="btn btn-edit">Изменить</a>
+                <a href="{% url 'movie_delete' movie.id %}" class="btn btn-delete">Удалить</a>
+            </div>
+        </div>
+    {% empty %}
+        <p>Пока фильмов нет.</p>
+    {% endfor %}
+</div>
+{% endblock %}

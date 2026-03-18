@@ -1,0 +1,206 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ movie.title }}{% endblock %}
+
+{% block content %}
+<style>
+    .movie-detail {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 8px 22px rgba(0, 0, 0, 0.12);
+        display: flex;
+        gap: 30px;
+        align-items: flex-start;
+        margin-bottom: 30px;
+    }
+
+    .movie-detail img {
+        width: 320px;
+        height: 450px;
+        object-fit: cover;
+        border-radius: 16px;
+    }
+
+    .movie-info h1 {
+        margin-top: 0;
+        color: #1f2a44;
+    }
+
+    .movie-info p {
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 12px;
+    }
+
+    .buttons {
+        display: flex;
+        gap: 12px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        display: inline-block;
+        text-decoration: none;
+        color: white;
+        padding: 10px 18px;
+        border-radius: 10px;
+    }
+
+    .btn-back {
+        background: #6c63ff;
+    }
+
+    .btn-edit {
+        background: #3498db;
+    }
+
+    .btn-delete {
+        background: #e74c3c;
+    }
+
+    .sessions-block,
+    .reviews-block,
+    .review-form-block {
+        background: white;
+        border-radius: 20px;
+        padding: 25px;
+        box-shadow: 0 8px 22px rgba(0, 0, 0, 0.12);
+        margin-bottom: 30px;
+    }
+
+    .sessions-block h2,
+    .reviews-block h2,
+    .review-form-block h2 {
+        margin-top: 0;
+        color: #1f2a44;
+    }
+
+    .session-item,
+    .review-item {
+        padding: 14px;
+        border-bottom: 1px solid #e5e5e5;
+        font-size: 17px;
+    }
+
+    .session-item:last-child,
+    .review-item:last-child {
+        border-bottom: none;
+    }
+
+    .review-author {
+        font-weight: bold;
+        color: #2c3e50;
+        margin-bottom: 6px;
+    }
+
+    .review-date {
+        color: #888;
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+
+    .review-rating {
+        color: #f39c12;
+        margin-bottom: 8px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+    }
+
+    input, textarea {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 18px;
+        border: 1px solid #dcdcdc;
+        border-radius: 10px;
+        font-size: 16px;
+        box-sizing: border-box;
+    }
+
+    textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    .submit-btn {
+        background: #27ae60;
+        color: white;
+        border: none;
+        padding: 12px 18px;
+        border-radius: 10px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+</style>
+
+<div class="movie-detail">
+    <img src="{% static movie.poster %}" alt="{{ movie.title }}">
+
+    <div class="movie-info">
+        <h1>{{ movie.title }}</h1>
+        <p><b>Жанр:</b> {{ movie.genre }}</p>
+        <p><b>Год выпуска:</b> {{ movie.release_year }}</p>
+        <p><b>Длительность:</b> {{ movie.duration }} мин</p>
+        <p><b>Описание:</b> {{ movie.description }}</p>
+
+        <div class="buttons">
+            <a href="{% url 'movie_list' %}" class="btn btn-back">Назад</a>
+            <a href="{% url 'movie_update' movie.id %}" class="btn btn-edit">Изменить</a>
+            <a href="{% url 'movie_delete' movie.id %}" class="btn btn-delete">Удалить</a>
+        </div>
+    </div>
+</div>
+
+<div class="sessions-block">
+    <h2>Сеансы фильма</h2>
+
+    {% for session in sessions %}
+        <div class="session-item">
+            <b>Дата и время:</b> {{ session.date_time|date:"d.m.Y H:i" }} |
+            <b>Зал:</b> {{ session.hall_number }}
+        </div>
+    {% empty %}
+        <div class="session-item">Для этого фильма пока нет сеансов.</div>
+    {% endfor %}
+</div>
+
+<div class="review-form-block">
+    <h2>Оставить отзыв</h2>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <label>Ваше имя</label>
+        <input type="text" name="user_name">
+
+        <label>Ваш отзыв</label>
+        <textarea name="text"></textarea>
+
+        <label>Оценка (1-10)</label>
+        <input type="number" name="rating" min="1" max="10">
+
+        <button type="submit" class="submit-btn">Добавить отзыв</button>
+    </form>
+</div>
+
+<div class="reviews-block">
+    <h2>Отзывы</h2>
+
+    {% for review in reviews %}
+        <div class="review-item">
+            <div class="review-author">{{ review.user_name }}</div>
+            <div class="review-date">{{ review.created_at|date:"d.m.Y H:i" }}</div>
+            <div class="review-rating">Оценка: {{ review.rating }}/10</div>
+            <div>{{ review.text }}</div>
+        </div>
+    {% empty %}
+        <div class="review-item">Пока отзывов нет.</div>
+    {% endfor %}
+</div>
+{% endblock %}

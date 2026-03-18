@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}Удаление фильма{% endblock %}
+
+{% block content %}
+<style>
+    .delete-card {
+        width: 600px;
+        margin: 0 auto;
+        background: white;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 8px 22px rgba(0, 0, 0, 0.12);
+        text-align: center;
+    }
+
+    h1 {
+        color: #1f2a44;
+        margin-bottom: 20px;
+    }
+
+    p {
+        font-size: 18px;
+        margin-bottom: 25px;
+    }
+
+    .buttons {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+    }
+
+    button, a {
+        padding: 12px 18px;
+        border: none;
+        border-radius: 10px;
+        text-decoration: none;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    button {
+        background: #e74c3c;
+        color: white;
+    }
+
+    a {
+        background: #95a5a6;
+        color: white;
+    }
+</style>
+
+<div class="delete-card">
+    <h1>Удаление фильма</h1>
+    <p>Ты точно хочешь удалить фильм <b>{{ movie.title }}</b>?</p>
+
+    <div class="buttons">
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit">Да, удалить</button>
+        </form>
+
+        <a href="{% url 'movie_detail' movie.id %}">Отмена</a>
+    </div>
+</div>
+{% endblock %}

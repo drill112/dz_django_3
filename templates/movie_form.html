@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {% if movie %}Редактировать фильм{% else %}Добавить фильм{% endif %}
+{% endblock %}
+
+{% block content %}
+<style>
+    .form-card {
+        width: 700px;
+        margin: 0 auto;
+        background: white;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 8px 22px rgba(0, 0, 0, 0.12);
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 25px;
+        color: #1f2a44;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    input, textarea {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 18px;
+        border: 1px solid #dcdcdc;
+        border-radius: 10px;
+        font-size: 16px;
+        box-sizing: border-box;
+    }
+
+    textarea {
+        min-height: 140px;
+        resize: vertical;
+    }
+
+    .buttons {
+        display: flex;
+        gap: 12px;
+        margin-top: 10px;
+    }
+
+    button, .back-link {
+        padding: 12px 18px;
+        border: none;
+        border-radius: 10px;
+        text-decoration: none;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    button {
+        background: #27ae60;
+        color: white;
+    }
+
+    .back-link {
+        background: #95a5a6;
+        color: white;
+    }
+</style>
+
+<div class="form-card">
+    <h1>{% if movie %}Редактировать фильм{% else %}Добавить фильм{% endif %}</h1>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <label>Название</label>
+        <input type="text" name="title" value="{{ movie.title|default:'' }}">
+
+        <label>Описание</label>
+        <textarea name="description">{{ movie.description|default:'' }}</textarea>
+
+        <label>Год выпуска</label>
+        <input type="number" name="release_year" value="{{ movie.release_year|default:'' }}">
+
+        <label>Длительность (мин)</label>
+        <input type="number" name="duration" value="{{ movie.duration|default:'' }}">
+
+        <label>Жанр</label>
+        <input type="text" name="genre" value="{{ movie.genre|default:'' }}">
+
+        <label>Постер (например: images/poster.jpg)</label>
+        <input type="text" name="poster" value="{{ movie.poster|default:'' }}">
+
+        <div class="buttons">
+            <button type="submit">Сохранить</button>
+            <a href="{% url 'movie_list' %}" class="back-link">Отмена</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
