@@ -13,10 +13,27 @@ def is_worker(user):
 
 def movie_list(request):
     movies = Movie.objects.all()
+
+    title = request.GET.get('title', '')
+    genre = request.GET.get('genre', '')
+    release_year = request.GET.get('release_year', '')
+
+    if title:
+        movies = movies.filter(title__icontains=title)
+
+    if genre:
+        movies = movies.filter(genre__icontains=genre)
+
+    if release_year:
+        movies = movies.filter(release_year=release_year)
+
     return render(request, 'movie_list.html', {
         'movies': movies,
         'is_client': is_client(request.user),
         'is_worker': is_worker(request.user),
+        'title': title,
+        'genre': genre,
+        'release_year': release_year,
     })
 
 
