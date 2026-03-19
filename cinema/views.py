@@ -82,7 +82,7 @@ def movie_create(request):
         release_year = request.POST.get('release_year')
         duration = request.POST.get('duration')
         genre = request.POST.get('genre')
-        poster = request.POST.get('poster')
+        poster = request.FILES.get('poster')
 
         if title and description and release_year and duration and genre and poster:
             Movie.objects.create(
@@ -110,7 +110,11 @@ def movie_update(request, movie_id):
         movie.release_year = request.POST.get('release_year')
         movie.duration = request.POST.get('duration')
         movie.genre = request.POST.get('genre')
-        movie.poster = request.POST.get('poster')
+
+        new_poster = request.FILES.get('poster')
+        if new_poster:
+            movie.poster = new_poster
+
         movie.save()
         return redirect('movie_detail', movie_id=movie.id)
 

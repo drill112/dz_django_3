@@ -72,7 +72,7 @@
 <div class="form-card">
     <h1>{% if movie %}Редактировать фильм{% else %}Добавить фильм{% endif %}</h1>
 
-    <form method="post">
+    <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
 
         <label>Название</label>
@@ -90,8 +90,8 @@
         <label>Жанр</label>
         <input type="text" name="genre" value="{{ movie.genre|default:'' }}">
 
-        <label>Постер (например: images/poster.jpg)</label>
-        <input type="text" name="poster" value="{{ movie.poster|default:'' }}">
+        <label>Постер</label>
+        <input type="file" name="poster">
 
         <div class="buttons">
             <button type="submit">Сохранить</button>

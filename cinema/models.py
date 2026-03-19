@@ -7,7 +7,7 @@ class Movie(models.Model):
     release_year = models.PositiveIntegerField(verbose_name='Год выпуска')
     duration = models.PositiveIntegerField(verbose_name='Длительность (мин)')
     genre = models.CharField(max_length=100, verbose_name='Жанр')
-    poster = models.CharField(max_length=255, verbose_name='Постер')
+    poster = models.ImageField(upload_to='posters/', verbose_name='Постер')
 
     def __str__(self):
         return self.title
