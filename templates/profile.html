@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %}Профиль{% endblock %}
+
+{% block content %}
+<style>
+    .profile-card,
+    .review-card {
+        background: white;
+        border-radius: 20px;
+        padding: 25px;
+        box-shadow: 0 8px 22px rgba(0, 0, 0, 0.12);
+        margin-bottom: 25px;
+    }
+
+    h1, h2 {
+        color: #1f2a44;
+        margin-top: 0;
+    }
+
+    p {
+        font-size: 17px;
+        margin: 8px 0;
+    }
+
+    .role {
+        display: inline-block;
+        padding: 8px 14px;
+        border-radius: 10px;
+        color: white;
+        font-size: 14px;
+        margin-top: 10px;
+    }
+
+    .client {
+        background: #27ae60;
+    }
+
+    .worker {
+        background: #3498db;
+    }
+
+    .review-card a {
+        display: inline-block;
+        margin-top: 10px;
+        text-decoration: none;
+        background: #6c63ff;
+        color: white;
+        padding: 8px 12px;
+        border-radius: 8px;
+    }
+</style>
+
+<div class="profile-card">
+    <h1>Профиль</h1>
+    <p><b>Логин:</b> {{ user.username }}</p>
+
+    {% if is_client %}
+        <span class="role client">Client</span>
+    {% endif %}
+
+    {% if is_worker %}
+        <span class="role worker">worker</span>
+    {% endif %}
+</div>
+
+<div class="profile-card">
+    <h2>Мои отзывы</h2>
+
+    {% for review in my_reviews %}
+        <div class="review-card">
+            <p><b>Фильм:</b> {{ review.movie.title }}</p>
+            <p><b>Дата:</b> {{ review.created_at|date:"d.m.Y H:i" }}</p>
+            <p><b>Оценка:</b> {{ review.rating }}/10</p>
+            <p><b>Текст:</b> {{ review.text }}</p>
+            <a href="{% url 'movie_detail' review.movie.id %}">Открыть фильм</a>
+        </div>
+    {% empty %}
+        <p>У вас пока нет отзывов.</p>
+    {% endfor %}
+</div>
+{% endblock %}

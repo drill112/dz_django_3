@@ -107,6 +107,30 @@
         margin-bottom: 8px;
     }
 
+    .review-actions {
+        margin-top: 10px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .small-btn {
+        display: inline-block;
+        text-decoration: none;
+        color: white;
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-size: 14px;
+    }
+
+    .small-edit {
+        background: #3498db;
+    }
+
+    .small-delete {
+        background: #e74c3c;
+    }
+
     label {
         display: block;
         margin-bottom: 8px;
@@ -137,6 +161,11 @@
         font-size: 16px;
         cursor: pointer;
     }
+
+    .hint {
+        color: #666;
+        font-size: 15px;
+    }
 </style>
 
 <div class="movie-detail">
@@ -151,8 +180,11 @@
 
         <div class="buttons">
             <a href="{% url 'movie_list' %}" class="btn btn-back">Назад</a>
-            <a href="{% url 'movie_update' movie.id %}" class="btn btn-edit">Изменить</a>
-            <a href="{% url 'movie_delete' movie.id %}" class="btn btn-delete">Удалить</a>
+
+            {% if is_worker %}
+                <a href="{% url 'movie_update' movie.id %}" class="btn btn-edit">Изменить</a>
+                <a href="{% url 'movie_delete' movie.id %}" class="btn btn-delete">Удалить</a>
+            {% endif %}
         </div>
     </div>
 </div>
@@ -173,20 +205,25 @@
 <div class="review-form-block">
     <h2>Оставить отзыв</h2>
 
-    <form method="post">
-        {% csrf_token %}
+    {% if is_client %}
+        {% if user_review %}
+            <p class="hint">Вы уже оставили отзыв к этому фильму.</p>
+        {% else %}
+            <form method="post">
+                {% csrf_token %}
+                <label>Ваш отзыв</label>
+                <textarea name="text"></textarea>
 
-        <label>Ваше имя</label>
-        <input type="text" name="user_name">
+                <label>Оценка (1-10)</label>
+                <input type="number" name="rating" min="1" max="10">
 
-        <label>Ваш отзыв</label>
-        <textarea name="text"></textarea>
-
-        <label>Оценка (1-10)</label>
-        <input type="number" name="rating" min="1" max="10">
-
-        <button type="submit" class="submit-btn">Добавить отзыв</button>
-    </form>
+                <button type="submit" class="submit-btn">Добавить отзыв</button>
+            </form>
+            <p class="hint">Отзыв будет опубликован от имени вашего аккаунта.</p>
+        {% endif %}
+    {% else %}
+        <p class="hint">Только пользователь из группы «Client» может оставить отзыв.</p>
+    {% endif %}
 </div>
 
 <div class="reviews-block">
@@ -198,6 +235,15 @@
             <div class="review-date">{{ review.created_at|date:"d.m.Y H:i" }}</div>
             <div class="review-rating">Оценка: {{ review.rating }}/10</div>
             <div>{{ review.text }}</div>
+
+            {% if is_worker or review.user_name == user.username %}
+                <div class="review-actions">
+                    {% if review.user_name == user.username %}
+                        <a href="{% url 'review_update' review.id %}" class="small-btn small-edit">Изменить</a>
+                    {% endif %}
+                    <a href="{% url 'review_delete' review.id %}" class="small-btn small-delete">Удалить</a>
+                </div>
+            {% endif %}
         </div>
     {% empty %}
         <div class="review-item">Пока отзывов нет.</div>

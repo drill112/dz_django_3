@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block title %}Редактировать отзыв{% endblock %}
+
+{% block content %}
+<style>
+    .form-card {
+        width: 700px;
+        margin: 0 auto;
+        background: white;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 8px 22px rgba(0, 0, 0, 0.12);
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 25px;
+        color: #1f2a44;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+    }
+
+    textarea, input {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 18px;
+        border: 1px solid #dcdcdc;
+        border-radius: 10px;
+        font-size: 16px;
+        box-sizing: border-box;
+    }
+
+    textarea {
+        min-height: 140px;
+        resize: vertical;
+    }
+
+    .buttons {
+        display: flex;
+        gap: 12px;
+    }
+
+    button, .back-link {
+        padding: 12px 18px;
+        border: none;
+        border-radius: 10px;
+        text-decoration: none;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    button {
+        background: #3498db;
+        color: white;
+    }
+
+    .back-link {
+        background: #95a5a6;
+        color: white;
+    }
+</style>
+
+<div class="form-card">
+    <h1>Редактировать отзыв</h1>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <label>Текст отзыва</label>
+        <textarea name="text">{{ review.text }}</textarea>
+
+        <label>Оценка (1-10)</label>
+        <input type="number" name="rating" min="1" max="10" value="{{ review.rating }}">
+
+        <div class="buttons">
+            <button type="submit">Сохранить</button>
+            <a href="{% url 'movie_detail' review.movie.id %}" class="back-link">Отмена</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

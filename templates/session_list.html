@@ -4,9 +4,26 @@
 
 {% block content %}
 <style>
+    .top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+
     h1 {
         color: #1f2a44;
-        margin-bottom: 25px;
+        margin: 0;
+    }
+
+    .add-btn {
+        display: inline-block;
+        text-decoration: none;
+        background: #27ae60;
+        color: white;
+        padding: 12px 18px;
+        border-radius: 10px;
+        font-weight: bold;
     }
 
     .session-card {
@@ -27,25 +44,56 @@
         margin: 8px 0;
     }
 
-    .session-card a {
-        display: inline-block;
+    .buttons {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
         margin-top: 10px;
+    }
+
+    .btn {
+        display: inline-block;
         text-decoration: none;
-        background: #6c63ff;
         color: white;
         padding: 10px 16px;
         border-radius: 10px;
+        font-size: 14px;
+    }
+
+    .btn-open {
+        background: #6c63ff;
+    }
+
+    .btn-edit {
+        background: #3498db;
+    }
+
+    .btn-delete {
+        background: #e74c3c;
     }
 </style>
 
-<h1>Все сеансы</h1>
+<div class="top-bar">
+    <h1>Все сеансы</h1>
+    {% if is_worker %}
+        <a href="{% url 'session_create' %}" class="add-btn">Добавить сеанс</a>
+    {% endif %}
+</div>
 
 {% for session in sessions %}
     <div class="session-card">
         <h2>{{ session.movie.title }}</h2>
         <p><b>Дата и время:</b> {{ session.date_time|date:"d.m.Y H:i" }}</p>
         <p><b>Номер зала:</b> {{ session.hall_number }}</p>
-        <a href="{% url 'movie_detail' session.movie.id %}">Открыть фильм</a>
+
+        <div class="buttons">
+            <a href="{% url 'movie_detail' session.movie.id %}" class="btn btn-open">Открыть фильм</a>
+
+            {% if is_worker %}
+                <a href="{% url 'session_update' session.id %}" class="btn btn-edit">Изменить</a>
+                <a href="{% url 'session_delete' session.id %}" class="btn btn-delete">Удалить</a>
+            {% endif %}
+        </div>
     </div>
 {% empty %}
     <div class="session-card">

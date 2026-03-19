@@ -91,7 +91,9 @@
 
 <div class="top-bar">
     <h1>Все фильмы</h1>
-    <a href="{% url 'movie_create' %}" class="add-btn">Добавить фильм</a>
+    {% if is_worker %}
+        <a href="{% url 'movie_create' %}" class="add-btn">Добавить фильм</a>
+    {% endif %}
 </div>
 
 <div class="movies">
@@ -103,8 +105,11 @@
 
             <div class="buttons">
                 <a href="{% url 'movie_detail' movie.id %}" class="btn btn-detail">Подробнее</a>
-                <a href="{% url 'movie_update' movie.id %}" class="btn btn-edit">Изменить</a>
-                <a href="{% url 'movie_delete' movie.id %}" class="btn btn-delete">Удалить</a>
+
+                {% if is_worker %}
+                    <a href="{% url 'movie_update' movie.id %}" class="btn btn-edit">Изменить</a>
+                    <a href="{% url 'movie_delete' movie.id %}" class="btn btn-delete">Удалить</a>
+                {% endif %}
             </div>
         </div>
     {% empty %}

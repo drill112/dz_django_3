@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {% if session %}Редактировать сеанс{% else %}Добавить сеанс{% endif %}
+{% endblock %}
+
+{% block content %}
+<style>
+    .form-card {
+        width: 700px;
+        margin: 0 auto;
+        background: white;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 8px 22px rgba(0, 0, 0, 0.12);
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 25px;
+        color: #1f2a44;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+    }
+
+    input, select {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 18px;
+        border: 1px solid #dcdcdc;
+        border-radius: 10px;
+        font-size: 16px;
+        box-sizing: border-box;
+    }
+
+    .buttons {
+        display: flex;
+        gap: 12px;
+        margin-top: 10px;
+    }
+
+    button, .back-link {
+        padding: 12px 18px;
+        border: none;
+        border-radius: 10px;
+        text-decoration: none;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    button {
+        background: #27ae60;
+        color: white;
+    }
+
+    .back-link {
+        background: #95a5a6;
+        color: white;
+    }
+</style>
+
+<div class="form-card">
+    <h1>{% if session %}Редактировать сеанс{% else %}Добавить сеанс{% endif %}</h1>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <label>Фильм</label>
+        <select name="movie">
+            {% for movie in movies %}
+                <option value="{{ movie.id }}" {% if session and session.movie.id == movie.id %}selected{% endif %}>
+                    {{ movie.title }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <label>Дата и время</label>
+        <input type="datetime-local" name="date_time"
+               value="{% if session %}{{ session.date_time|date:'Y-m-d\\TH:i' }}{% endif %}">
+
+        <label>Номер зала</label>
+        <input type="number" name="hall_number" value="{{ session.hall_number|default:'' }}">
+
+        <div class="buttons">
+            <button type="submit">Сохранить</button>
+            <a href="{% url 'session_list' %}" class="back-link">Отмена</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
