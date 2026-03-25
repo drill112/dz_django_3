@@ -1,5 +1,12 @@
 from django.urls import path
+from rest_framework.routers import DefaultRouter
 from . import views
+from .api_views import MovieViewSet, SessionViewSet, ReviewViewSet, CinemaStatsAPIView
+
+router = DefaultRouter()
+router.register(r'api/movies', MovieViewSet, basename='api-movies')
+router.register(r'api/sessions', SessionViewSet, basename='api-sessions')
+router.register(r'api/reviews', ReviewViewSet, basename='api-reviews')
 
 urlpatterns = [
     path('', views.movie_list, name='movie_list'),
@@ -18,4 +25,8 @@ urlpatterns = [
     path('review/<int:review_id>/delete/', views.review_delete, name='review_delete'),
 
     path('profile/', views.profile_view, name='profile'),
+
+    path('api/stats/', CinemaStatsAPIView.as_view(), name='api-stats'),
 ]
+
+urlpatterns += router.urls
