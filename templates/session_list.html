@@ -49,6 +49,7 @@
         gap: 10px;
         flex-wrap: wrap;
         margin-top: 10px;
+        align-items: center;
     }
 
     .btn {
@@ -58,6 +59,8 @@
         padding: 10px 16px;
         border-radius: 10px;
         font-size: 14px;
+        border: none;
+        cursor: pointer;
     }
 
     .btn-open {
@@ -70,6 +73,19 @@
 
     .btn-delete {
         background: #e74c3c;
+    }
+
+    .btn-book {
+        background: #f39c12;
+    }
+
+    .booked-label {
+        color: #27ae60;
+        font-weight: bold;
+    }
+
+    .inline-form {
+        margin: 0;
     }
 </style>
 
@@ -88,6 +104,17 @@
 
         <div class="buttons">
             <a href="{% url 'movie_detail' session.movie.id %}" class="btn btn-open">Открыть фильм</a>
+
+            {% if is_client %}
+                {% if session.id in user_bookings %}
+                    <span class="booked-label">Квиток заброньовано</span>
+                {% else %}
+                    <form method="post" action="{% url 'book_ticket' session.id %}" class="inline-form">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-book">Забронювати квиток</button>
+                    </form>
+                {% endif %}
+            {% endif %}
 
             {% if is_worker %}
                 <a href="{% url 'session_update' session.id %}" class="btn btn-edit">Изменить</a>

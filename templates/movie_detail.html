@@ -39,6 +39,7 @@
         gap: 12px;
         margin-top: 20px;
         flex-wrap: wrap;
+        align-items: center;
     }
 
     .btn {
@@ -47,6 +48,8 @@
         color: white;
         padding: 10px 18px;
         border-radius: 10px;
+        border: none;
+        cursor: pointer;
     }
 
     .btn-back {
@@ -59,6 +62,15 @@
 
     .btn-delete {
         background: #e74c3c;
+    }
+
+    .btn-favorite {
+        background: #f39c12;
+    }
+
+    .favorite-label {
+        color: #27ae60;
+        font-weight: bold;
     }
 
     .sessions-block,
@@ -166,6 +178,10 @@
         color: #666;
         font-size: 15px;
     }
+
+    .inline-form {
+        margin: 0;
+    }
 </style>
 
 <div class="movie-detail">
@@ -180,6 +196,17 @@
 
         <div class="buttons">
             <a href="{% url 'movie_list' %}" class="btn btn-back">Назад</a>
+
+            {% if user.is_authenticated %}
+                {% if is_favorite %}
+                    <span class="favorite-label">Уже в избранном</span>
+                {% else %}
+                    <form method="post" action="{% url 'add_to_favorites' movie.id %}" class="inline-form">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-favorite">Додати в улюблені</button>
+                    </form>
+                {% endif %}
+            {% endif %}
 
             {% if is_worker %}
                 <a href="{% url 'movie_update' movie.id %}" class="btn btn-edit">Изменить</a>

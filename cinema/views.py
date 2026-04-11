@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from .models import Movie, Session, Review
+from django.db.models import Avg
+from .models import Movie, Session, Review, TicketBooking, FavoriteMovie
 
 
 def is_client(user):
@@ -71,6 +72,15 @@ def movie_detail(request, movie_id):
         'is_worker': is_worker(request.user),
     })
 
+@login_required
+def add_to_favorites(request, movie_id):
+    movie = get_object_or_404(Movie, id=movie_id)
+
+    if request.method == 'POST':
+        FavoriteMovie.objects.get_or_create(user=request.user, movie=movie)
+
+    return redirect('movie_detail', movie_id=movie.id)
+
 
 def movie_create(request):
     if not is_worker(request.user):
@@ -136,10 +146,30 @@ def movie_delete(request, movie_id):
 
 def session_list(request):
     sessions = Session.objects.select_related('movie').order_by('date_time')
+    user_bookings = []
+
+    if request.user.is_authenticated:
+        user_bookings = TicketBooking.objects.filter(user=request.user).values_list('session_id', flat=True)
+
     return render(request, 'session_list.html', {
         'sessions': sessions,
         'is_worker': is_worker(request.user),
+        'is_client': is_client(request.user),
+        'user_bookings': user_bookings,
     })
+
+
+@login_required
+def book_ticket(request, session_id):
+    session = get_object_or_404(Session, id=session_id)
+
+    if request.method == 'POST':
+        TicketBooking.objects.get_or_create(
+            user=request.user,
+            session=session
+        )
+
+    return redirect('session_list')
 
 
 @login_required
@@ -249,9 +279,23 @@ def review_delete(request, review_id):
 @login_required
 def profile_view(request):
     my_reviews = Review.objects.filter(user_name=request.user.username).order_by('-created_at')
+    my_bookings = TicketBooking.objects.filter(user=request.user).select_related('session', 'session__movie').order_by('-booked_at')
+    my_favorites = FavoriteMovie.objects.filter(user=request.user).select_related('movie').order_by('-added_at')
+
+    avg_rating = my_reviews.aggregate(avg=Avg('rating'))['avg']
+    if avg_rating is None:
+        avg_rating = 0
 
     return render(request, 'profile.html', {
         'my_reviews': my_reviews,
+        'my_bookings': my_bookings,
+        'my_favorites': my_favorites,
+        'avg_rating': round(avg_rating, 1),
         'is_client': is_client(request.user),
         'is_worker': is_worker(request.user),
     })
+
+@login_required
+def favorite_movies(request):
+    favorites = FavoriteMovie.objects.filter(user=request.user).select_related('movie').order_by('-added_at')
+    return render(request, 'favorite_movies.html', {'favorites': favorites})

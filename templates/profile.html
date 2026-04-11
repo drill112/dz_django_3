@@ -49,6 +49,42 @@
         padding: 8px 12px;
         border-radius: 8px;
     }
+
+    .stats {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-top: 15px;
+    }
+
+    .stat-box {
+        background: #f4f6fb;
+        padding: 15px;
+        border-radius: 12px;
+        min-width: 180px;
+    }
+
+    .top-links {
+        margin-top: 15px;
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .top-links a {
+        text-decoration: none;
+        color: white;
+        padding: 10px 14px;
+        border-radius: 10px;
+    }
+
+    .fav-link {
+        background: #f39c12;
+    }
+
+    .session-link {
+        background: #6c63ff;
+    }
 </style>
 
 <div class="profile-card">
@@ -62,21 +98,63 @@
     {% if is_worker %}
         <span class="role worker">worker</span>
     {% endif %}
+
+    <div class="stats">
+        <div class="stat-box">
+            <b>Кількість відгуків:</b>
+            <div>{{ my_reviews|length }}</div>
+        </div>
+
+        <div class="stat-box">
+            <b>Кількість бронювань:</b>
+            <div>{{ my_bookings|length }}</div>
+        </div>
+
+        <div class="stat-box">
+            <b>Улюблені фільми:</b>
+            <div>{{ my_favorites|length }}</div>
+        </div>
+
+        <div class="stat-box">
+            <b>Середня оцінка:</b>
+            <div>{{ avg_rating }}</div>
+        </div>
+    </div>
+
+    <div class="top-links">
+        <a href="{% url 'favorite_movies' %}" class="fav-link">Улюблені фільми</a>
+        <a href="{% url 'session_list' %}" class="session-link">Поточні сеанси</a>
+    </div>
 </div>
 
 <div class="profile-card">
-    <h2>Мои отзывы</h2>
+    <h2>Мої відгуки</h2>
 
     {% for review in my_reviews %}
         <div class="review-card">
-            <p><b>Фильм:</b> {{ review.movie.title }}</p>
+            <p><b>Фільм:</b> {{ review.movie.title }}</p>
             <p><b>Дата:</b> {{ review.created_at|date:"d.m.Y H:i" }}</p>
-            <p><b>Оценка:</b> {{ review.rating }}/10</p>
+            <p><b>Оцінка:</b> {{ review.rating }}/10</p>
             <p><b>Текст:</b> {{ review.text }}</p>
             <a href="{% url 'movie_detail' review.movie.id %}">Открыть фильм</a>
         </div>
     {% empty %}
         <p>У вас пока нет отзывов.</p>
+    {% endfor %}
+</div>
+
+<div class="profile-card">
+    <h2>Переглянуті фільми / бронювання</h2>
+
+    {% for booking in my_bookings %}
+        <div class="review-card">
+            <p><b>Фільм:</b> {{ booking.session.movie.title }}</p>
+            <p><b>Сеанс:</b> {{ booking.session.date_time|date:"d.m.Y H:i" }}</p>
+            <p><b>Зал:</b> {{ booking.session.hall_number }}</p>
+            <a href="{% url 'movie_detail' booking.session.movie.id %}">Открыть фильм</a>
+        </div>
+    {% empty %}
+        <p>У вас пока нет бронювань.</p>
     {% endfor %}
 </div>
 {% endblock %}

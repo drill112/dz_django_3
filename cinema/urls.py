@@ -27,6 +27,9 @@ urlpatterns = [
     path('profile/', views.profile_view, name='profile'),
 
     path('api/stats/', CinemaStatsAPIView.as_view(), name='api-stats'),
+    path('session/<int:session_id>/book/', views.book_ticket, name='book_ticket'),
+    path('movie/<int:movie_id>/favorite/', views.add_to_favorites, name='add_to_favorites'),
+    path('favorites/', views.favorite_movies, name='favorite_movies'),
 ]
 
 urlpatterns += router.urls
